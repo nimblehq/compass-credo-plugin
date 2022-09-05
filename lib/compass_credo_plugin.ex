@@ -1,5 +1,6 @@
 defmodule CompassCredoPlugin do
-  @config_file :code.priv_dir(:compass_credo_plugin)
+  @config_file :compass_credo_plugin
+               |> :code.priv_dir()
                |> Path.join(".credo.exs")
                |> File.read!()
 

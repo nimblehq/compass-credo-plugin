@@ -49,7 +49,7 @@ defmodule CompassCredoPlugin.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:credo, "~> 1.6.6", [only: [:dev, :test], runtime: false]},
+      {:credo, "~> 1.6.6", [only: [:dev, :test]]},
       {:dialyxir, "~> 1.2.0", [only: [:dev], runtime: false]},
       {:excoveralls, "~> 0.14.6", [only: :test]},
       {:faker, "~> 0.17.0", [only: [:dev, :test], runtime: false]}
