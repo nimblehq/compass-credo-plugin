@@ -1,4 +1,4 @@
-defmodule CompassCredoPlugin.Checks.DefdelegateOrderTest do
+defmodule CompassCredoPlugin.Check.DefdelegateOrderTest do
   use Credo.Test.Case
 
   alias CompassCredoPlugin.Check.DefdelegateOrder
@@ -61,6 +61,26 @@ defmodule CompassCredoPlugin.Checks.DefdelegateOrderTest do
           |> format_text()
           |> inspect()
         end
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DefdelegateOrder)
+      |> refute_issues()
+    end
+  end
+
+  describe "when there is only defdelegate in the module" do
+    test "does not report an issue" do
+      module_source_code = """
+      defmodule CredoSampleModule do
+        alias CredoSampleModule.AnotherModule
+
+        @default_value 10
+
+        defdelegate format_number(number), to: SharedModule
+        defdelegate format_text(text), to: SharedModule
       end
       """
 

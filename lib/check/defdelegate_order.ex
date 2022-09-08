@@ -4,7 +4,7 @@ defmodule CompassCredoPlugin.Check.DefdelegateOrder do
     category: :readability,
     explanations: [
       check: """
-        Prefer placing defdelegate functions at the top of the module, just before the normal functions.
+        Prefer placing defdelegate functions the functions.
 
         # Less preferred
         defmodule App.UserView do
