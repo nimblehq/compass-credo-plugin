@@ -3,7 +3,7 @@
     %{
       name: "default",
       checks: [
-        {CompassCredoPlugin.Checks.DefdelegateOrder, []}
+        {CompassCredoPlugin.Check.DefdelegateOrder, []}
       ]
     }
   ]

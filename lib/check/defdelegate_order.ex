@@ -4,7 +4,7 @@ defmodule CompassCredoPlugin.Check.DefdelegateOrder do
     category: :readability,
     explanations: [
       check: """
-        Prefer placing defdelegate functions the functions.
+        Prefer placing defdelegate before public and private functions.
 
         # Less preferred
         defmodule App.UserView do
