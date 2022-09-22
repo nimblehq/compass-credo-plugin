@@ -37,6 +37,8 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
       """
     ]
 
+  @def_ops [:def, :defp, :if, :unless]
+
   @impl true
   def run(%SourceFile{} = source_file, params) do
     issue_meta = IssueMeta.for(source_file, params)
@@ -44,8 +46,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
     Credo.Code.prewalk(source_file, &traverse(&1, &2, issue_meta))
   end
 
-  defp traverse({:def, _meta, [_, [{_, {:__block__, _, _}}]]} = _ast, _issues, _issue_meta) do
-    IO.puts("Block function")
+  defp traverse({op_call, _meta, [_, [{_, {:__block__, _, _}}]]} = ast, issues, _issue_meta)
+       when op_call in @def_ops do
+    IO.puts("It contains __block__ in the AST")
+    {ast, issues}
 
     # a = Credo.Code.to_lines(ast)
     # IO.inspect(a)
@@ -53,18 +57,3 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp traverse(ast, issues, _), do: {ast, issues}
 end
-
-# a = length([{:do,
-#  {:__block__, [],
-#   [
-#     {:=, [line: 7, column: 7],
-#      [{:a, [line: 7, column: 5], nil}, {:+, [line: 7, column: 11], [5, 7]}]},
-#     {:=, [line: 8, column: 7],
-#      [
-#        {:a, [line: 8, column: 5], nil},
-#        {:+, [line: 8, column: 11], [{:a, [line: 8, column: 9], nil}, 1]}
-#      ]},
-#     {:a, [line: 9, column: 5], nil}
-#   ]}}])
-
-#   # IO.inspect(a)
