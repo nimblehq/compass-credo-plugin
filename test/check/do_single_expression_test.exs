@@ -11,11 +11,17 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
         @default_value 10
 
+        def some_other_function() do
+          a = 5 + 7
+          a = a + 1
+          a
+        end
+
         if some_condition do
           :ok
         end
 
-        def validate_coupon() do
+        def some_function() do
           :ok
         end
 
@@ -23,11 +29,11 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       """
 
       # [issue] =
-        module_source_code
-        |> to_source_file()
-        |> run_check(DoSingleExpression)
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
 
-        # IO.inspect(issue)
+      # IO.inspect(issue)
     end
   end
 end

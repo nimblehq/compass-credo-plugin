@@ -39,11 +39,17 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   @impl true
   def run(%SourceFile{} = source_file, params) do
-    a = Credo.Code.to_lines(source_file)
-    IO.inspect(a)
+    issue_meta = IssueMeta.for(source_file, params)
 
-    # issue_meta = IssueMeta.for(source_file, params)
-
-    # Credo.Code.prewalk(source_file, &traverse(&1, &2, issue_meta))
+    Credo.Code.prewalk(source_file, &traverse(&1, &2, issue_meta))
   end
+
+  defp traverse({:def, _meta, [_, [{_, {:__block__, _, _}}]]} = _ast, _issues, _issue_meta) do
+    IO.puts("Block function")
+
+    # a = Credo.Code.to_lines(ast)
+    # IO.inspect(a)
+  end
+
+  defp traverse(ast, issues, _), do: {ast, issues}
 end
