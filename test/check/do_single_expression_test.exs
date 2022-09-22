@@ -3,7 +3,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "when there is any defdelegate after the first function" do
+  describe "when there is any functions or if statements with a single line in the body" do
     test "reports an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
@@ -11,20 +11,13 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
         @default_value 10
 
-        def validate_coupon() do
+        if some_condition do
           :ok
         end
 
-        def create_voucher(attrs \\ %{}),
-          do:
-            %Voucher{}
-            |> change_voucher(attrs)
-            |> Repo.insert()
-
-        def foo, do: IO.inspect("foo")
-
-        def some_func(),
-          do: IO.puts("hi")
+        def validate_coupon() do
+          :ok
+        end
 
       end
       """
@@ -32,7 +25,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       # [issue] =
         module_source_code
         |> to_source_file()
-        |> run_check(SingleStatement)
+        |> run_check(DoSingleExpression)
 
         # IO.inspect(issue)
     end
