@@ -11,17 +11,17 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
         @default_value 10
 
-        def some_other_function() do
+        def some_function() do
           a = 5 + 7
           a = a + 1
           a
         end
 
-        if some_condition do
+        def some_other_function() do
           :ok
         end
 
-        def some_function() do
+        if some_condition do
           :ok
         end
 

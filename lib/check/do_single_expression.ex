@@ -53,3 +53,18 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp traverse(ast, issues, _), do: {ast, issues}
 end
+
+# a = length([{:do,
+#  {:__block__, [],
+#   [
+#     {:=, [line: 7, column: 7],
+#      [{:a, [line: 7, column: 5], nil}, {:+, [line: 7, column: 11], [5, 7]}]},
+#     {:=, [line: 8, column: 7],
+#      [
+#        {:a, [line: 8, column: 5], nil},
+#        {:+, [line: 8, column: 11], [{:a, [line: 8, column: 9], nil}, 1]}
+#      ]},
+#     {:a, [line: 9, column: 5], nil}
+#   ]}}])
+
+#   # IO.inspect(a)
