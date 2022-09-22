@@ -37,9 +37,6 @@ defmodule CompassCredoPlugin.Check.RepeatingFragments do
     case Enum.at(body, 0) do
       {:__aliases__, meta, names} ->
         rise_issue_for_repeating_fragments(names, meta, issues, issue_meta)
-
-      _ ->
-        issues
     end
   end
 

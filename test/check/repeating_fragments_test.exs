@@ -52,4 +52,17 @@ defmodule CompassCredoPlugin.Check.RepeatingFragmentsTest do
       |> refute_issues()
     end
   end
+
+  describe "when there aren't module name" do
+    test "does not report an issue" do
+      module_source_code = """
+        name = "abc"
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(RepeatingFragments)
+      |> refute_issues()
+    end
+  end
 end
