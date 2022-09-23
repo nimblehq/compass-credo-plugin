@@ -37,23 +37,32 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
       """
     ]
 
-  @def_ops [:def, :defp, :if, :unless]
+  @matching_operations [:def, :defp, :if, :unless]
 
   @impl true
   def run(%SourceFile{} = source_file, params) do
     issue_meta = IssueMeta.for(source_file, params)
 
-    Credo.Code.prewalk(source_file, &traverse(&1, &2, issue_meta))
+    source_file = Credo.SourceFile.source(source_file)
+
+    ast = Code.string_to_quoted!(source_file, line: 1, columns: true, token_metadata: true)
+
+    Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta))
   end
 
-  defp traverse({op_call, _meta, [_, [{_, {:__block__, _, _}}]]} = ast, issues, _issue_meta)
-       when op_call in @def_ops do
-    IO.puts("It contains __block__ in the AST")
-    {ast, issues}
-
-    # a = Credo.Code.to_lines(ast)
-    # IO.inspect(a)
+  defp traverse({definition, _, [_fun, body]} = ast, issues, _issue_meta) when definition in @matching_operations do
+    IO.inspect(body[:do])
+    case body[:do] do
+      {:__block__, _, _} ->
+        # It's a block and will have multiple expression, so skip it
+        IO.puts("BLOCK")
+        {ast, issues}
+      {_, a, b} ->
+        IO.inspect(a)
+        IO.inspect(b)
+        IO.puts("not a block")
+    end
   end
 
-  defp traverse(ast, issues, _), do: {ast, issues}
+  defp traverse(ast, issues, _issue_meta), do: {ast, issues}
 end
