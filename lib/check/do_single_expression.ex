@@ -53,7 +53,8 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp traverse({operation, meta, [name, body]} = ast, issues, issue_meta)
        when operation in @matching_operations do
-    if contains_single_expression?(body) and contains_do_and_end?(meta) do
+    if contains_single_expression?(body) and contains_do_and_end?(meta) and
+         total_body_lines(meta) <= 2 do
       trigger = "#{operation} #{elem(name, 0)}"
       {ast, Enum.reverse([issue_for(trigger, meta[:line], issue_meta) | issues])}
     else
@@ -62,6 +63,8 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
   end
 
   defp traverse(ast, issues, _issue_meta), do: {ast, issues}
+
+  defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line]
 
   defp contains_single_expression?(body) do
     case body[:do] do
