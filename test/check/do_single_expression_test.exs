@@ -3,7 +3,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "given two valid functions BUT the last IF statement contains a single expression" do
+  describe "given two valid functions BUT the last IF statement contains a single expression with a do/end block" do
     test "reports an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
