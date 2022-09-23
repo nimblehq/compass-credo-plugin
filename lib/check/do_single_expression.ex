@@ -40,29 +40,47 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
   @matching_operations [:def, :defp, :if, :unless]
 
   @impl true
-  def run(%SourceFile{} = source_file, params) do
+  def run(source_file, params) do
+    ast =
+      source_file
+      |> Credo.SourceFile.source()
+      |> Code.string_to_quoted!(token_metadata: true)
+
     issue_meta = IssueMeta.for(source_file, params)
-
-    source_file = Credo.SourceFile.source(source_file)
-
-    ast = Code.string_to_quoted!(source_file, line: 1, columns: true, token_metadata: true)
 
     Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta))
   end
 
-  defp traverse({definition, _, [_fun, body]} = ast, issues, _issue_meta) when definition in @matching_operations do
-    IO.inspect(body[:do])
-    case body[:do] do
-      {:__block__, _, _} ->
-        # It's a block and will have multiple expression, so skip it
-        IO.puts("BLOCK")
-        {ast, issues}
-      {_, a, b} ->
-        IO.inspect(a)
-        IO.inspect(b)
-        IO.puts("not a block")
+  defp traverse({operation, meta, [name, body]} = ast, issues, issue_meta)
+       when operation in @matching_operations do
+    if contains_single_expression?(body) and contains_do_and_end?(meta) do
+      trigger = "#{operation} #{elem(name, 0)}"
+      {ast, Enum.reverse([issue_for(trigger, meta[:line], issue_meta) | issues])}
+    else
+      {ast, issues}
     end
   end
 
   defp traverse(ast, issues, _issue_meta), do: {ast, issues}
+
+  defp contains_single_expression?(body) do
+    case body[:do] do
+      {:__block__, _, _} ->
+        false
+
+      _ ->
+        true
+    end
+  end
+
+  def contains_do_and_end?(meta), do: !is_nil(meta[:do]) and !is_nil(meta[:end])
+
+  defp issue_for(trigger, line_no, issue_meta) do
+    format_issue(
+      issue_meta,
+      message: "`:#{trigger}` contains a single expression in a do ... end block. Use do: instead",
+      trigger: "@#{trigger}",
+      line_no: line_no
+    )
+  end
 end

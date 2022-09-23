@@ -9,17 +9,12 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       defmodule CredoSampleModule do
         alias CredoSampleModule.AnotherModule
 
-        @default_value 10
-
         def some_function() do
-          a = 5 + 7
-          a = a + 1
-          a
+           a = 5 + 7
+           a + 5
         end
 
-        def some_other_function() do
-          :ok
-        end
+        def some_other_function(), do: :ok
 
         if some_condition do
           :ok
@@ -28,12 +23,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       end
       """
 
-      # [issue] =
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-
-      # IO.inspect(issue)
+      |> assert_issues()
     end
   end
 end
