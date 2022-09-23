@@ -30,6 +30,38 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     end
   end
 
+  describe "given all the functions and if statements are invalid" do
+    test "reports an issue on all instances" do
+      module_source_code = """
+      defmodule CredoSampleModule do
+        alias CredoSampleModule.AnotherModule
+
+        def some_function() do
+           a = 5 + 7
+        end
+
+        if some_condition do
+          :ok
+        end
+
+        unless 1 > 2 do
+          :ok
+        end
+
+        defp another_function() do
+          :ok
+        end
+
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> assert_issues(fn issues -> assert Enum.count(issues) == 4 end)
+    end
+  end
+
   describe "given a function that contains a single expression with a do/end block BUT it spans multiple lines" do
     test "does NOT report an issue" do
       module_source_code = """
