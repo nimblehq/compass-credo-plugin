@@ -4,7 +4,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
   alias CompassCredoPlugin.Check.DoSingleExpression
 
   describe "given two valid functions BUT the last IF statement contains a single expression with a do/end block" do
-    test "reports an issue" do
+    test "reports an issue on the IF statement only" do
       module_source_code = """
       defmodule CredoSampleModule do
         alias CredoSampleModule.AnotherModule
@@ -26,7 +26,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issue()
+      |> assert_issue(fn issue -> assert issue.trigger == "@if some_condition" end)
     end
   end
 
