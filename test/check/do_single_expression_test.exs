@@ -30,6 +30,28 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     end
   end
 
+  describe "given a function that contains a single expression with a do/end block BUT it spans multiple lines" do
+    test "does NOT report an issue" do
+      module_source_code = """
+      defmodule CredoSampleModule do
+        alias CredoSampleModule.AnotherModule
+
+        def create_voucher() do
+          %Voucher{}
+          |> change_voucher(attrs)
+          |> Repo.insert()
+        end
+
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> refute_issues()
+    end
+  end
+
   describe "given two valid functions and a valid IF statement" do
     test "does NOT report an issue" do
       module_source_code = """
