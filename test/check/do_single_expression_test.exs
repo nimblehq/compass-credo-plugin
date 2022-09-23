@@ -26,7 +26,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issues()
+      |> assert_issue()
     end
   end
 end
