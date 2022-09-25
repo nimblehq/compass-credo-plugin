@@ -14,9 +14,9 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
            a + 5
         end
 
-        def some_other_function(), do: :ok
+        def some_other_function, do: :ok
 
-        if some_condition do
+        if some_condition() do
           :ok
         end
 
@@ -62,7 +62,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     end
   end
 
-  describe "given a function that contains a single expression with a do/end block BUT it spans multiple lines" do
+  describe "given functions that contain a single expression with a do/end block BUT span multiple lines" do
     test "does NOT report an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
@@ -74,6 +74,13 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
           |> Repo.insert()
         end
 
+        def get_items() do
+          [
+            item_1,
+            item_2
+          ]
+        end
+
       end
       """
 
@@ -81,6 +88,24 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       |> to_source_file()
       |> run_check(DoSingleExpression)
       |> refute_issues()
+    end
+  end
+
+  describe "given a function that contain a WHEN clause and has a single expression with a do/end block BUt still has a single line" do
+    test "reports an issue on the when clause" do
+      module_source_code = """
+      defmodule CredoSampleModule do
+        def build_error_message(purchase, _attrs)
+            when purchase.product.is_shippable == false do
+          "Purchase's product is not shippable"
+        end
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> assert_issue(fn issue -> assert issue.trigger == "@def when" end)
     end
   end
 

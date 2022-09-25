@@ -1,7 +1,6 @@
 defmodule CompassCredoPlugin.Check.DoSingleExpression do
   use Credo.Check,
     base_priority: :normal,
-    tags: [:controversial],
     category: :readability,
     explanations: [
       check: """
@@ -37,7 +36,8 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
       """
     ]
 
-  @matching_operations [:def, :defp, :if, :unless]
+  @matching_definition_types [:def, :defp, :if, :unless]
+  @min_required_body_lines 2
 
   @impl true
   def run(source_file, params) do
@@ -51,11 +51,11 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
     Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta))
   end
 
-  defp traverse({operation, meta, [name, body]} = ast, issues, issue_meta)
-       when operation in @matching_operations do
+  defp traverse({definition_type, meta, [definition, body]} = ast, issues, issue_meta)
+       when definition_type in @matching_definition_types do
     if contains_single_expression?(body) and contains_do_and_end?(meta) and
-         total_body_lines(meta) <= 2 do
-      trigger = "#{operation} #{elem(name, 0)}"
+         total_body_lines(meta) < @min_required_body_lines do
+      trigger = "#{definition_type} #{elem(definition, 0)}"
       {ast, Enum.reverse([issue_for(trigger, meta[:line], issue_meta) | issues])}
     else
       {ast, issues}
@@ -63,8 +63,6 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
   end
 
   defp traverse(ast, issues, _issue_meta), do: {ast, issues}
-
-  defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line]
 
   defp contains_single_expression?(body) do
     case body[:do] do
@@ -76,12 +74,15 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
     end
   end
 
-  def contains_do_and_end?(meta), do: !is_nil(meta[:do]) and !is_nil(meta[:end])
+  defp contains_do_and_end?(meta), do: !is_nil(meta[:do]) and !is_nil(meta[:end])
+
+  defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line] - 1
 
   defp issue_for(trigger, line_no, issue_meta) do
     format_issue(
       issue_meta,
-      message: "`:#{trigger}` contains a single expression in a do ... end block. Use do: instead",
+      message:
+        "`:#{trigger}` contains a single expression and a single line in a do ... end block. Use do: instead",
       trigger: "@#{trigger}",
       line_no: line_no
     )
