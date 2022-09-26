@@ -36,11 +36,11 @@ defmodule CompassCredoPlugin.Check.RepeatingFragments do
   defp issues_for_module_names(body, issues, issue_meta) do
     case Enum.at(body, 0) do
       {:__aliases__, meta, names} ->
-        rise_issue_for_repeating_fragments(names, meta, issues, issue_meta)
+        maybe_raise_issue_for_repeating_fragments(names, meta, issues, issue_meta)
     end
   end
 
-  defp rise_issue_for_repeating_fragments(names, meta, issues, issue_meta) do
+  defp maybe_raise_issue_for_repeating_fragments(names, meta, issues, issue_meta) do
     is_repeating? =
       names
       |> Enum.uniq()
