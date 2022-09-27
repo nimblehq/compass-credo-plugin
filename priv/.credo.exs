@@ -4,6 +4,7 @@
       name: "default",
       checks: [
         {CompassCredoPlugin.Check.DefdelegateOrder, []}
+        {CompassCredoPlugin.Check.SingleModuleFile, []}
       ]
     }
   ]
