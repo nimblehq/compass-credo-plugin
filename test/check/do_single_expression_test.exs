@@ -3,11 +3,15 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "given two valid functions BUT the last IF statement contains a single expression with a do/end block" do
+  describe "given three valid functions BUT the last IF statement contains a single expression with a do/end block" do
     test "reports an issue on the IF statement only" do
       module_source_code = """
       defmodule CredoSampleModule do
         alias CredoSampleModule.AnotherModule
+
+        my_map = %{
+          a: 1
+        }
 
         def some_function() do
            a = 5 + 7
@@ -16,17 +20,19 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
         def some_other_function, do: :ok
 
-        if some_condition() do
+        if some_condition,
+          do: :ok
+
+        if some_other_condition() do
           :ok
         end
-
       end
       """
 
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issue(fn issue -> assert issue.trigger == "@if some_condition" end)
+      |> assert_issue(fn issue -> assert issue.trigger == "@if some_other_condition" end)
     end
   end
 
@@ -51,7 +57,6 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
         defp another_function() do
           :ok
         end
-
       end
       """
 
@@ -80,7 +85,6 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
             item_2
           ]
         end
-
       end
       """
 
@@ -91,7 +95,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     end
   end
 
-  describe "given a function that contain a WHEN clause and has a single expression with a do/end block BUt still has a single line" do
+  describe "given a function that contains a WHEN clause and a single expression with a do/end block BUT still has a single line" do
     test "reports an issue on the when clause" do
       module_source_code = """
       defmodule CredoSampleModule do
@@ -106,32 +110,6 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       |> to_source_file()
       |> run_check(DoSingleExpression)
       |> assert_issue(fn issue -> assert issue.trigger == "@def when" end)
-    end
-  end
-
-  describe "given two valid functions and a valid IF statement" do
-    test "does NOT report an issue" do
-      module_source_code = """
-      defmodule CredoSampleModule do
-        alias CredoSampleModule.AnotherModule
-
-        def some_function() do
-           a = 5 + 7
-           a + 5
-        end
-
-        def some_other_function(), do: :ok
-
-        if some_condition,
-          do: :ok
-
-      end
-      """
-
-      module_source_code
-      |> to_source_file()
-      |> run_check(DoSingleExpression)
-      |> refute_issues()
     end
   end
 end

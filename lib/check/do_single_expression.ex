@@ -48,15 +48,16 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
     issue_meta = IssueMeta.for(source_file, params)
 
-    Credo.Code.prewalk(ast, &traverse(&1, &2, issue_meta))
+    ast
+    |> Credo.Code.prewalk(&traverse(&1, &2, issue_meta))
+    |> Enum.reverse()
   end
 
-  defp traverse({definition_type, meta, [definition, body]} = ast, issues, issue_meta)
+  defp traverse({definition_type, meta, [_definition, body]} = ast, issues, issue_meta)
        when definition_type in @matching_definition_types do
     if contains_single_expression?(body) and contains_do_and_end?(meta) and
          total_body_lines(meta) < @min_required_body_lines do
-      trigger = "#{definition_type} #{elem(definition, 0)}"
-      {ast, Enum.reverse([issue_for(trigger, meta[:line], issue_meta) | issues])}
+      {ast, [issue_for(meta[:line], issue_meta) | issues]}
     else
       {ast, issues}
     end
@@ -78,12 +79,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line] - 1
 
-  defp issue_for(trigger, line_no, issue_meta) do
+  defp issue_for(line_no, issue_meta) do
     format_issue(
       issue_meta,
-      message:
-        "`:#{trigger}` contains a single expression and a single line in a do ... end block. Use do: instead",
-      trigger: "@#{trigger}",
+      message: "Single expression and single line in a do ... end block. Use do: instead",
       line_no: line_no
     )
   end
