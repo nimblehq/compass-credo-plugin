@@ -3,12 +3,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "given three valid functions BUT the last IF statement contains a single expression with a do/end block" do
-    test "reports an issue on the IF statement only" do
+  describe "given valid functions, if statements and various declariations" do
+    test "does NOT report an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
-        alias CredoSampleModule.AnotherModule
-
         my_map = %{
           a: 1
         }
@@ -18,30 +16,30 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
            a + 5
         end
 
-        def some_other_function, do: :ok
+        def get_response(), do: {:ok, :response}
 
         if some_condition,
           do: :ok
 
-        if some_other_condition() do
-          :ok
-        end
+        unless 1 > 2, do: :ok
+
+        def some_other_function, do: :ok
+
+        defp another_function(), do: :ok
       end
       """
 
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issue(fn issue -> assert issue.trigger == "@if some_other_condition" end)
+      |> refute_issues()
     end
   end
 
-  describe "given all the functions and if statements are invalid" do
+  describe "given all the functions and if statements are INVALID" do
     test "reports an issue on all instances" do
       module_source_code = """
       defmodule CredoSampleModule do
-        alias CredoSampleModule.AnotherModule
-
         def some_function() do
            a = 5 + 7
         end
@@ -57,13 +55,17 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
         defp another_function() do
           :ok
         end
+
+        def get_response() do
+          {:ok, :response}
+        end
       end
       """
 
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issues(fn issues -> assert Enum.count(issues) == 4 end)
+      |> assert_issues(fn issues -> assert Enum.count(issues) == 5 end)
     end
   end
 
@@ -71,8 +73,6 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     test "does NOT report an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
-        alias CredoSampleModule.AnotherModule
-
         def create_voucher() do
           %Voucher{}
           |> change_voucher(attrs)
@@ -96,7 +96,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
   end
 
   describe "given a function that contains a WHEN clause and a single expression with a do/end block BUT still has a single line" do
-    test "reports an issue on the when clause" do
+    test "reports an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
         def build_error_message(purchase, _attrs)
@@ -109,7 +109,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issue(fn issue -> assert issue.trigger == "@def when" end)
+      |> assert_issue()
     end
   end
 end
