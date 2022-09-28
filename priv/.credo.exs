@@ -4,7 +4,8 @@
       name: "default",
       checks: [
         {CompassCredoPlugin.Check.DefdelegateOrder, []},
-        {CompassCredoPlugin.Check.RepeatingFragments, []},
+        {CompassCredoPlugin.Check.SingleModuleFile, []},
+        {CompassCredoPlugin.Check.RepeatingFragments, []}
       ]
     }
   ]
