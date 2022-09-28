@@ -52,12 +52,12 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
           :ok
         end
 
-        defp another_function() do
-          :ok
-        end
-
         def get_response() do
           {:ok, :response}
+        end
+
+        defp another_function() do
+          :ok
         end
       end
       """
