@@ -35,24 +35,17 @@ defmodule CompassCredoPlugin.Check.SingleModuleFile do
     issues =
       source_file
       |> Credo.Code.to_tokens()
-      |> Enum.filter(fn line ->
-        case line do
-          {:identifier, _meta, :defmodule} -> true
-          _ -> false
-        end
-      end)
       |> Enum.reduce([], fn item, acc ->
         case item do
-          {:identifier, {line, _columns, _}, _} ->
+          {:identifier, {line, _columns, _}, :defmodule} ->
             [issue_for(issue_meta, line, "") | acc]
+
+          _ ->
+            acc
         end
       end)
 
-    if Enum.count(issues) > 1 do
-      issues
-    else
-      []
-    end
+    if Enum.count(issues) > 1, do: issues, else: []
   end
 
   defp issue_for(issue_meta, line_no, trigger) do
