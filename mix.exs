@@ -6,7 +6,7 @@ defmodule CompassCredoPlugin.MixProject do
       app: :compass_credo_plugin,
       description: "Credo custom checks plugin to comply with Nimble Compass conventions",
       package: package(),
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -52,11 +52,10 @@ defmodule CompassCredoPlugin.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:credo, "~> 1.6.6", [only: [:dev, :test]]},
+      {:credo, "~> 1.6.6"},
       {:dialyxir, "~> 1.2.0", [only: [:dev], runtime: false]},
       {:excoveralls, "~> 0.14.6", [only: :test]},
-      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
-      {:faker, "~> 0.17.0", [only: [:dev, :test], runtime: false]}
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
   end
 
