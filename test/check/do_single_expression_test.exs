@@ -3,7 +3,57 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "given valid functions, if statements and various declariations" do
+  describe "given all the if and unless statements are valid" do
+    test "does NOT report an issue" do
+      module_source_code = """
+      defmodule CredoSampleModule do
+        def some_function() do
+          a = 1
+          if some_condition, do: :ok
+        end
+
+        def some_other_function() do
+          a = 1
+          unless 1 > 2, do: :ok
+        end
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> refute_issues()
+    end
+  end
+
+  describe "given all the if and unless statements are INVALID" do
+    test "reports an issue on all instances" do
+      module_source_code = """
+      defmodule CredoSampleModule do
+        def some_function() do
+          a = 1
+          if some_condition do
+            ok
+          end
+        end
+
+        def some_other_function() do
+          a = 1
+          unless 1 > 2 do
+            :ok
+          end
+        end
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> assert_issues(fn issues -> assert Enum.count(issues) == 2 end)
+    end
+  end
+
+  describe "given all the functions are valid" do
     test "does NOT report an issue" do
       module_source_code = """
       defmodule CredoSampleModule do
@@ -18,12 +68,8 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
         def get_response(), do: {:ok, :response}
 
-        if some_condition,
+        def func(),
           do: :ok
-
-        unless 1 > 2, do: :ok
-
-        def some_other_function, do: :ok
 
         defp another_function(), do: :ok
       end
@@ -36,20 +82,12 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     end
   end
 
-  describe "given all the functions and if statements are INVALID" do
+  describe "given all the functions are INVALID" do
     test "reports an issue on all instances" do
       module_source_code = """
       defmodule CredoSampleModule do
         def some_function() do
            a = 5 + 7
-        end
-
-        if some_condition do
-          :ok
-        end
-
-        unless 1 > 2 do
-          :ok
         end
 
         def get_response() do
@@ -65,7 +103,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issues(fn issues -> assert Enum.count(issues) == 5 end)
+      |> assert_issues(fn issues -> assert Enum.count(issues) == 3 end)
     end
   end
 
