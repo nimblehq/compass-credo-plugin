@@ -6,6 +6,7 @@
         {CompassCredoPlugin.Check.DefdelegateOrder, []},
         {CompassCredoPlugin.Check.SingleModuleFile, []},
         {CompassCredoPlugin.Check.RepeatingFragments, []}
+        {CompassCredoPlugin.Check.DoSingleExpression, []},
       ]
     }
   ]
