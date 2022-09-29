@@ -17,22 +17,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
         :ok
       end
 
-      def create_voucher(attrs \\ %{}),
-      do:
-        %Voucher{}
-        |> change_voucher(attrs)
-        |> Repo.insert()
-
       # Preferred
       if some_condition, do: "some_stuff"
 
       def validate_coupon(), do: :ok
-
-      def create_voucher(attrs \\ %{}) do
-        %Voucher{}
-        |> change_voucher(attrs)
-        |> Repo.insert()
-      end
       """
     ]
 
