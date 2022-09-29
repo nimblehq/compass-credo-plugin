@@ -1,4 +1,4 @@
-[![Build Status](CI_BADGE_URL goes here)](REPO_URL goes here)
+[![Test](https://github.com/nimblehq/compass-credo-plugin/actions/workflows/test.yml/badge.svg)](https://github.com/nimblehq/compass-credo-plugin/actions/workflows/test.yml)
 
 ## Introduction
 
