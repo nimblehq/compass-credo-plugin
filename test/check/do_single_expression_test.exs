@@ -68,7 +68,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
         def get_response(), do: {:ok, :response}
 
-        def func(),
+        def some_other_function(),
           do: :ok
 
         defp another_function(), do: :ok
