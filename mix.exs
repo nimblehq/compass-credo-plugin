@@ -6,7 +6,7 @@ defmodule CompassCredoPlugin.MixProject do
       app: :compass_credo_plugin,
       description: "Credo custom checks plugin to comply with Nimble Compass conventions",
       package: package(),
-      version: "0.1.2",
+      version: "1.0.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
