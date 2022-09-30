@@ -1,5 +1,6 @@
 {
   "skip_files": [
+    "lib/compass_credo_plugin.ex",
     "lib/compass_credo_plugin/application.ex",
     "test/support"
   ],

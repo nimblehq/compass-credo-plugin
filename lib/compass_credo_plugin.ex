@@ -1,9 +1,10 @@
 defmodule CompassCredoPlugin do
-  @config_file :code.priv_dir(:compass_credo_plugin)
+  import Credo.Plugin
+
+  @config_file :compass_credo_plugin
+               |> :code.priv_dir()
                |> Path.join(".credo.exs")
                |> File.read!()
-
-  import Credo.Plugin
 
   def init(exec) do
     register_default_config(exec, @config_file)
