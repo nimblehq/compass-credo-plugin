@@ -1,8 +1,8 @@
-[![Build Status](CI_BADGE_URL goes here)](REPO_URL goes here)
+[![Test](https://github.com/nimblehq/compass-credo-plugin/actions/workflows/test.yml/badge.svg)](https://github.com/nimblehq/compass-credo-plugin/actions/workflows/test.yml)
 
 ## Introduction
 
-> *App introduction goes here ...*
+The repo contains custom Credo rules to support [Nimble's Elixir conventions](https://nimblehq.co/compass/development/code-conventions/elixir/).
 
 ## Project Setup
 
@@ -51,5 +51,7 @@
   ```
 
 ### CI/CD
+
 The project relies entirely on [Github Actions](https://github.com/features/actions) for CI/CD via multiple workflows located under the [`.github/workflows/`](.github/workflows) directory.
+
 Please check out the [`.github/workflows/README.md`](.github/workflows/README.md) file for further instructions.
