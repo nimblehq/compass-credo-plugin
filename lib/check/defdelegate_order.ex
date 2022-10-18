@@ -65,7 +65,6 @@ defmodule CompassCredoPlugin.Check.DefdelegateOrder do
     |> Enum.reverse()
   end
 
-  defp split_by_first_function(functions) do
-    Enum.split_while(functions, fn {attribute, _} -> attribute not in [:def, :defp] end)
-  end
+  defp split_by_first_function(functions),
+    do: Enum.split_while(functions, fn {attribute, _} -> attribute not in [:def, :defp] end)
 end

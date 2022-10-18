@@ -41,7 +41,7 @@
       # If you create your own checks, you must specify the source files for
       # them here, so they can be loaded by Credo before running the analysis.
       #
-      requires: [],
+      requires: ["./lib/check/**/*.ex"],
       #
       # If you want to enforce a style guide and need a more traditional linting
       # experience, you can change `strict` to `true` below:
@@ -159,7 +159,8 @@
         {Credo.Check.Readability.StrictModuleLayout,
          [
            order:
-             ~w/shortdoc moduledoc behaviour use import alias require module_attribute defstruct callback/a
+             ~w/shortdoc moduledoc behaviour use import alias require module_attribute defstruct callback public_fun private_fun/a,
+           ignore: ~w/callback_impl/a
          ]},
         {Credo.Check.Consistency.MultiAliasImportRequireUse, []},
         {Credo.Check.Consistency.UnusedVariableNames, false},
@@ -178,11 +179,15 @@
         {Credo.Check.Refactor.VariableRebinding, []},
         {Credo.Check.Warning.LeakyEnvironment, []},
         {Credo.Check.Warning.MapGetUnsafePass, []},
-        {Credo.Check.Warning.UnsafeToAtom, []}
+        {Credo.Check.Warning.UnsafeToAtom, []},
 
         #
-        # Custom checks can be created using `mix credo.gen.check`.
+        # Our plugin checks
         #
+        {CompassCredoPlugin.Check.DefdelegateOrder, []},
+        {CompassCredoPlugin.Check.DoSingleExpression, []},
+        {CompassCredoPlugin.Check.RepeatingFragments, []},
+        {CompassCredoPlugin.Check.SingleModuleFile, []},
       ]
     }
   ]

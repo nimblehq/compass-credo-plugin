@@ -6,7 +6,5 @@ defmodule CompassCredoPlugin do
                |> Path.join(".credo.exs")
                |> File.read!()
 
-  def init(exec) do
-    register_default_config(exec, @config_file)
-  end
+  def init(exec), do: register_default_config(exec, @config_file)
 end
