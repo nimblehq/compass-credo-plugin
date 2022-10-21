@@ -3,6 +3,26 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
+  describe "tttt" do
+    test "tt" do
+      module_source_code = """
+      defmodule summit do
+        def create_voucher(attrs),
+          do:
+            [
+              1,
+              2
+            ]
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> refute_issues()
+    end
+  end
+
   describe "given all the if and unless statements are valid" do
     test "does NOT report an issue" do
       module_source_code = """

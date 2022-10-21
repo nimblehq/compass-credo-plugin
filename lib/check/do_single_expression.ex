@@ -26,13 +26,17 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   @matching_definition_types [:def, :defp, :if, :unless]
   @min_required_body_lines 2
+  @max_required_do_lines 2
 
   @impl true
   def run(source_file, params) do
     ast =
       source_file
       |> Credo.SourceFile.source()
-      |> Code.string_to_quoted!(token_metadata: true)
+      |> Code.string_to_quoted!(
+        token_metadata: true,
+        literal_encoder: &{:ok, {:__block__, &2, [&1]}}
+      )
 
     issue_meta = IssueMeta.for(source_file, params)
 
@@ -43,11 +47,19 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp traverse({definition_type, meta, [_definition, body]} = ast, issues, issue_meta)
        when definition_type in @matching_definition_types do
-    if contains_single_expression?(body) and contains_do_and_end?(meta) and
-         total_body_lines(meta) < @min_required_body_lines do
-      {ast, [issue_for(meta[:line], issue_meta) | issues]}
-    else
-      {ast, issues}
+    cond do
+      contains_single_expression?(body) and contains_do_and_end?(meta) ->
+        if total_body_lines(meta) < @min_required_body_lines,
+          do: {ast, [issue_for(meta[:line], issue_meta) | issues]},
+          else: {ast, issues}
+
+      contains_single_expression?(body) and !contains_do_and_end?(meta) ->
+        if total_do_lines(body) > @max_required_do_lines,
+          do: {ast, [issue_for(meta[:line], issue_meta) | issues]},
+          else: {ast, issues}
+
+      true ->
+        {ast, issues}
     end
   end
 
@@ -66,6 +78,11 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
   defp contains_do_and_end?(meta), do: !is_nil(meta[:do]) and !is_nil(meta[:end])
 
   defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line] - 1
+
+  defp total_do_lines(body) do
+    IO.inspect(body)
+    1
+  end
 
   defp issue_for(line_no, issue_meta) do
     format_issue(
