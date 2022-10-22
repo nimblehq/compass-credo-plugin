@@ -3,16 +3,24 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "tttt" do
-    test "tt" do
+  describe "given all the do ... end and do: functions are valid" do
+    test "does NOT report an issue" do
       module_source_code = """
       defmodule summit do
-        def create_voucher(attrs),
-          do:
-            [
-              1,
-              2
-            ]
+        def validate_coupon(), do: :ok
+
+        def list_by_ids(courier_company_ids),
+          do: where(CourierCompany, [company], company.id in ^courier_company_ids)
+
+        def build_error_message(purchase, _attrs)
+          when purchase.product.is_shippable == false,
+          do: "Purchase's product is not shippable"
+
+        def create_voucher(attrs) do
+          %Voucher{}
+          |> change_voucher(attrs)
+          |> Repo.insert()
+        end
       end
       """
 
@@ -20,6 +28,38 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
       |> to_source_file()
       |> run_check(DoSingleExpression)
       |> refute_issues()
+    end
+  end
+
+  describe "given all the do ... end and do: functions are INVALID" do
+    test "reports an issue on all instances" do
+      module_source_code = """
+      defmodule summit do
+        def validate_coupon() do
+          :ok
+        end
+
+        def list_by_ids(courier_company_ids) do
+          where(CourierCompany, [company], company.id in ^courier_company_ids)
+        end
+
+        def build_error_message(purchase, _attrs)
+            when purchase.product.is_shippable == false do
+          "Purchase's product is not shippable"
+        end
+
+        def create_voucher(attrs),
+          do:
+            %Voucher{}
+            |> change_voucher(attrs)
+            |> Repo.insert()
+      end
+      """
+
+      module_source_code
+      |> to_source_file()
+      |> run_check(DoSingleExpression)
+      |> assert_issues(fn issues -> assert Enum.count(issues) == 4 end)
     end
   end
 

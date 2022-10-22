@@ -8,25 +8,49 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
       Prefer using the single-line function as long as mix format command satisfies to keep the function body just in one line.
 
-      # Less Preferred
-      if some_condition do
-        "some_stuff"
-      end
+      Prefer using multi-line function body if it spans multiple lines.
 
+      # Less Preferred
       def validate_coupon() do
         :ok
       end
 
-      # Preferred
-      if some_condition, do: "some_stuff"
+      def list_by_ids(courier_company_ids) do
+        where(CourierCompany, [company], company.id in ^courier_company_ids)
+      end
 
+      def build_error_message(purchase, _attrs)
+          when purchase.product.is_shippable == false do
+        "Purchase's product is not shippable"
+      end
+
+      def create_voucher(attrs),
+        do:
+          %Voucher{}
+          |> change_voucher(attrs)
+          |> Repo.insert()
+
+      # Preferred
       def validate_coupon(), do: :ok
+
+      def list_by_ids(courier_company_ids),
+        do: where(CourierCompany, [company], company.id in ^courier_company_ids)
+
+      def build_error_message(purchase, _attrs)
+        when purchase.product.is_shippable == false,
+        do: "Purchase's product is not shippable"
+
+      def create_voucher(attrs) do
+        %Voucher{}
+        |> change_voucher(attrs)
+        |> Repo.insert()
+      end
       """
     ]
 
   @matching_definition_types [:def, :defp, :if, :unless]
-  @min_required_body_lines 2
-  @max_required_do_lines 2
+  @min_required_do_end_body_lines 2
+  @max_permitted_do_body_lines 1
 
   @impl true
   def run(source_file, params) do
@@ -49,13 +73,31 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
        when definition_type in @matching_definition_types do
     cond do
       contains_single_expression?(body) and contains_do_and_end?(meta) ->
-        if total_body_lines(meta) < @min_required_body_lines,
-          do: {ast, [issue_for(meta[:line], issue_meta) | issues]},
+        if total_body_lines(meta) < @min_required_do_end_body_lines,
+          do:
+            {ast,
+             [
+               issue_for(
+                 meta[:line],
+                 "Single expression and single line in a do ... end block. Use do: instead",
+                 issue_meta
+               )
+               | issues
+             ]},
           else: {ast, issues}
 
       contains_single_expression?(body) and !contains_do_and_end?(meta) ->
-        if total_do_lines(body) > @max_required_do_lines,
-          do: {ast, [issue_for(meta[:line], issue_meta) | issues]},
+        if total_do_lines(body) > @max_permitted_do_body_lines,
+          do:
+            {ast,
+             [
+               issue_for(
+                 meta[:line],
+                 "Single line in a do: block. Use do ... end block instead",
+                 issue_meta
+               )
+               | issues
+             ]},
           else: {ast, issues}
 
       true ->
@@ -79,15 +121,13 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line] - 1
 
-  defp total_do_lines(body) do
-    IO.inspect(body)
-    1
-  end
+  defp total_do_lines([{{_, do_meta, _}, {_, body_meta, _}}]),
+    do: (body_meta[:closing][:line] || body_meta[:line]) - do_meta[:line]
 
-  defp issue_for(line_no, issue_meta) do
+  defp issue_for(line_no, message, issue_meta) do
     format_issue(
       issue_meta,
-      message: "Single expression and single line in a do ... end block. Use do: instead",
+      message: message,
       line_no: line_no
     )
   end
