@@ -110,6 +110,9 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
   defp total_do_lines([{{_, do_meta, _}, {_, body_meta, _}}]),
     do: (body_meta[:closing][:line] || body_meta[:line]) - do_meta[:line]
 
+  defp total_do_lines([{{_, do_meta, _}, {_, body_meta, _}}, _]),
+    do: (body_meta[:closing][:line] || body_meta[:line]) - do_meta[:line]
+
   defp do_end_check_message,
     do: "Single expression and single line in a do ... end block. Use do: instead"
 
