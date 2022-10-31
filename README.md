@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The repo contains custom Credo rules to support [Nimble's Elixir conventions](https://nimblehq.co/compass/development/code-conventions/elixir/).
+The repo contains custom [Credo checks](https://hexdocs.pm/credo/Credo.Check.html) to support [Nimble's Elixir conventions](https://nimblehq.co/compass/development/code-conventions/elixir/).
 
 ## Project Setup
 
