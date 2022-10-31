@@ -25,13 +25,10 @@ defmodule CompassCredoPlugin.Check.RepeatingFragments do
     Credo.Code.prewalk(source_file, &traverse(&1, &2, issue_meta))
   end
 
-  defp traverse({:defmodule, _meta, arguments} = ast, issues, issue_meta) do
-    {ast, issues_for_module_names(arguments, issues, issue_meta)}
-  end
+  defp traverse({:defmodule, _meta, arguments} = ast, issues, issue_meta),
+    do: {ast, issues_for_module_names(arguments, issues, issue_meta)}
 
-  defp traverse(ast, issues, _issue_meta) do
-    {ast, issues}
-  end
+  defp traverse(ast, issues, _issue_meta), do: {ast, issues}
 
   defp issues_for_module_names(body, issues, issue_meta) do
     case Enum.at(body, 0) do
