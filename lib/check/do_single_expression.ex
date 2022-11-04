@@ -73,7 +73,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
        when definition_type in @matching_definition_types do
     cond do
       contains_single_expression?(body) and contains_do_and_end?(meta) ->
-        if total_body_lines(meta) < @min_required_do_end_body_lines do
+        if total_do_end_lines(meta) < @min_required_do_end_body_lines do
           {ast, [issue_for(meta[:line], do_end_check_message(), issue_meta) | issues]}
         else
           {ast, issues}
@@ -105,7 +105,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
 
   defp contains_do_and_end?(meta), do: !is_nil(meta[:do]) and !is_nil(meta[:end])
 
-  defp total_body_lines(meta), do: meta[:end][:line] - meta[:do][:line] - 1
+  defp total_do_end_lines(meta), do: meta[:end][:line] - meta[:do][:line] - 1
 
   defp total_do_lines([{{_, do_meta, _}, {_, body_meta, _}}]),
     do: (body_meta[:closing][:line] || body_meta[:line]) - do_meta[:line]
@@ -117,7 +117,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
     do: "Single expression and single line in a do ... end block. Use do: instead"
 
   defp do_check_message,
-    do: "Multiple lines in a do: block. Use do ... end block instead"
+    do: "Multiple lines in a do: block. Use do ... end instead"
 
   defp issue_for(line_no, message, issue_meta) do
     format_issue(
