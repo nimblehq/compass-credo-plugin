@@ -73,18 +73,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
        when definition_type in @matching_definition_types do
     cond do
       contains_single_expression?(body) and contains_do_and_end?(meta) ->
-        if total_do_end_lines(meta) < @min_required_do_end_body_lines do
-          {ast, [issue_for(meta[:line], do_end_check_message(), issue_meta) | issues]}
-        else
-          {ast, issues}
-        end
+        handle_do_and_end(meta, ast, issues, issue_meta)
 
       contains_single_expression?(body) and not contains_do_and_end?(meta) ->
-        if total_do_lines(body) > @max_permitted_do_body_lines do
-          {ast, [issue_for(meta[:line], do_check_message(), issue_meta) | issues]}
-        else
-          {ast, issues}
-        end
+        handle_do(meta, body, ast, issues, issue_meta)
 
       true ->
         {ast, issues}
@@ -92,6 +84,22 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
   end
 
   defp traverse(ast, issues, _issue_meta), do: {ast, issues}
+
+  defp handle_do_and_end(meta, ast, issues, issue_meta) do
+    if total_do_end_lines(meta) < @min_required_do_end_body_lines do
+      {ast, [issue_for(meta[:line], do_end_check_message(), issue_meta) | issues]}
+    else
+      {ast, issues}
+    end
+  end
+
+  defp handle_do(meta, body, ast, issues, issue_meta) do
+    if total_do_lines(body) > @max_permitted_do_body_lines do
+      {ast, [issue_for(meta[:line], do_check_message(), issue_meta) | issues]}
+    else
+      {ast, issues}
+    end
+  end
 
   defp contains_single_expression?(body) do
     case body[:do] do
