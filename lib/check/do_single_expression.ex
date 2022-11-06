@@ -79,7 +79,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpression do
           {ast, issues}
         end
 
-      contains_single_expression?(body) and !contains_do_and_end?(meta) ->
+      contains_single_expression?(body) and not contains_do_and_end?(meta) ->
         if total_do_lines(body) > @max_permitted_do_body_lines do
           {ast, [issue_for(meta[:line], do_check_message(), issue_meta) | issues]}
         else

@@ -3,10 +3,10 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
   alias CompassCredoPlugin.Check.DoSingleExpression
 
-  describe "given all the do ... end and do: functions are valid" do
+  describe "given all the do: functions are valid" do
     test "does NOT report an issue" do
       module_source_code = """
-      defmodule summit do
+      defmodule CredoSampleModule do
         def validate_coupon(), do: :ok
 
         def list_by_ids(courier_company_ids),
@@ -16,11 +16,8 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
           when purchase.product.is_shippable == false,
           do: "Purchase's product is not shippable"
 
-        def create_voucher(attrs) do
-          %Voucher{}
-          |> change_voucher(attrs)
-          |> Repo.insert()
-        end
+        def create_voucher(attrs),
+         do: [1, 2, 3]
       end
       """
 
@@ -31,35 +28,29 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
     end
   end
 
-  describe "given all the do ... end and do: functions are INVALID" do
+  describe "given all the do: functions are INVALID" do
     test "reports an issue on all instances" do
       module_source_code = """
-      defmodule summit do
-        def validate_coupon() do
-          :ok
-        end
-
-        def list_by_ids(courier_company_ids) do
-          where(CourierCompany, [company], company.id in ^courier_company_ids)
-        end
-
-        def build_error_message(purchase, _attrs)
-            when purchase.product.is_shippable == false do
-          "Purchase's product is not shippable"
-        end
+      defmodule CredoSampleModule do
 
         def create_voucher(attrs),
           do:
             %Voucher{}
             |> change_voucher(attrs)
             |> Repo.insert()
+
+        def create_voucher(attrs), do: [
+          1,
+          2,
+          3
+        ]
       end
       """
 
       module_source_code
       |> to_source_file()
       |> run_check(DoSingleExpression)
-      |> assert_issues(fn issues -> assert Enum.count(issues) == 4 end)
+      |> assert_issues(fn issues -> assert Enum.count(issues) == 2 end)
     end
   end
 
