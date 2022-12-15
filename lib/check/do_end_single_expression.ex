@@ -1,4 +1,4 @@
-defmodule CompassCredoPlugin.Check.DoSingleExpression do
+defmodule CompassCredoPlugin.Check.DoEndSingleExpression do
   use Credo.Check,
     base_priority: :normal,
     category: :readability,
