@@ -6,8 +6,8 @@
         {CompassCredoPlugin.Check.DefdelegateOrder, []},
         {CompassCredoPlugin.Check.SingleModuleFile, []},
         {CompassCredoPlugin.Check.RepeatingFragments, []}
-        {CompassCredoPlugin.Check.DoEndSingleExpression, []},
-        {CompassCredoPlugin.Check.DoMultipleLines, []},
+        {CompassCredoPlugin.Check.DoEndBlockHasSingleLine, []},
+        {CompassCredoPlugin.Check.DoBlockHasMultipleLines, []},
       ]
     }
   ]

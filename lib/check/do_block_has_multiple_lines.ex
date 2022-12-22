@@ -1,4 +1,4 @@
-defmodule CompassCredoPlugin.Check.DoMultipleLines do
+defmodule CompassCredoPlugin.Check.DoBlockHasMultipleLines do
   use Credo.Check,
     base_priority: :normal,
     category: :readability,

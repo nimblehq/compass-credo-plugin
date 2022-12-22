@@ -185,8 +185,8 @@
         # Our plugin checks
         #
         {CompassCredoPlugin.Check.DefdelegateOrder, []},
-        {CompassCredoPlugin.Check.DoEndSingleExpression, []},
-        {CompassCredoPlugin.Check.DoMultipleLines, []},
+        {CompassCredoPlugin.Check.DoEndBlockHasSingleLine, []},
+        {CompassCredoPlugin.Check.DoBlockHasMultipleLines, []},
         {CompassCredoPlugin.Check.RepeatingFragments, []},
         {CompassCredoPlugin.Check.SingleModuleFile, []},
       ]

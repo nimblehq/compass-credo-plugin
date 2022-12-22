@@ -1,7 +1,7 @@
-defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
+defmodule CompassCredoPlugin.Check.DoBlockHasMultipleLinesTest do
   use Credo.Test.Case
 
-  alias CompassCredoPlugin.Check.DoMultipleLines
+  alias CompassCredoPlugin.Check.DoBlockHasMultipleLines
 
   describe "given all the do: functions are valid" do
     test "does NOT report an issue" do
@@ -27,7 +27,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> refute_issues()
     end
   end
@@ -50,7 +50,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> assert_issues(fn issues -> assert Enum.count(issues) == 2 end)
     end
   end
@@ -75,7 +75,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> refute_issues()
     end
   end
@@ -101,7 +101,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> assert_issues(fn issues -> assert Enum.count(issues) == 2 end)
     end
   end
@@ -129,7 +129,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> refute_issues()
     end
   end
@@ -158,7 +158,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> assert_issues(fn issues -> assert Enum.count(issues) == 3 end)
     end
   end
@@ -180,7 +180,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> refute_issues()
     end
   end
@@ -202,7 +202,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> assert_issues(fn issues -> assert Enum.count(issues) == 2 end)
     end
   end
@@ -227,7 +227,7 @@ defmodule CompassCredoPlugin.Check.DoMultipleLinesTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoMultipleLines)
+      |> run_check(DoBlockHasMultipleLines)
       |> refute_issues()
     end
   end
