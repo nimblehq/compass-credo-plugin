@@ -1,7 +1,7 @@
-defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
+defmodule CompassCredoPlugin.Check.DoEndBlockHasSingleLineTest do
   use Credo.Test.Case
 
-  alias CompassCredoPlugin.Check.DoSingleExpression
+  alias CompassCredoPlugin.Check.DoEndBlockHasSingleLine
 
   describe "given all the if and unless statements are valid" do
     test "does NOT report an issue" do
@@ -21,7 +21,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoSingleExpression)
+      |> run_check(DoEndBlockHasSingleLine)
       |> refute_issues()
     end
   end
@@ -48,7 +48,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoSingleExpression)
+      |> run_check(DoEndBlockHasSingleLine)
       |> assert_issues(fn issues -> assert Enum.count(issues) == 2 end)
     end
   end
@@ -77,7 +77,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoSingleExpression)
+      |> run_check(DoEndBlockHasSingleLine)
       |> refute_issues()
     end
   end
@@ -102,7 +102,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoSingleExpression)
+      |> run_check(DoEndBlockHasSingleLine)
       |> assert_issues(fn issues -> assert Enum.count(issues) == 3 end)
     end
   end
@@ -128,7 +128,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoSingleExpression)
+      |> run_check(DoEndBlockHasSingleLine)
       |> refute_issues()
     end
   end
@@ -146,7 +146,7 @@ defmodule CompassCredoPlugin.Check.DoSingleExpressionTest do
 
       module_source_code
       |> to_source_file()
-      |> run_check(DoSingleExpression)
+      |> run_check(DoEndBlockHasSingleLine)
       |> assert_issue()
     end
   end
