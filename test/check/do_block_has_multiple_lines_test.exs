@@ -19,7 +19,7 @@ defmodule CompassCredoPlugin.Check.DoBlockHasMultipleLinesTest do
         def create_voucher(attrs),
          do: [1, 2, 3]
 
-         def create_voucher(attrs),
+        def create_voucher(attrs),
           do:
             %Voucher{}
       end
@@ -36,7 +36,6 @@ defmodule CompassCredoPlugin.Check.DoBlockHasMultipleLinesTest do
     test "reports an issue on all instances" do
       module_source_code = """
       defmodule CredoSampleModule do
-
         def create_voucher(attrs),
           do:
             %Voucher{}
@@ -84,7 +83,6 @@ defmodule CompassCredoPlugin.Check.DoBlockHasMultipleLinesTest do
     test "reports an issue on all instances" do
       module_source_code = """
       defmodule CredoSampleModule do
-
         defp create_voucher(attrs),
           do:
             %Voucher{}
